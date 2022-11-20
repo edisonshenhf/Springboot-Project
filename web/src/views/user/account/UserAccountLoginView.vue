@@ -1,5 +1,5 @@
 <template>
-    <ContentField>
+    <ContentField v-if="!$store.state.user.pulling_info">
         <div class="row justify-content-md-center">
             <div class="col-3">
                 <form @submit.prevent="login">
@@ -9,9 +9,10 @@
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">密码</label>
-                        <input v-model="password" type="text" class="form-control" id="password" placeholder="请输入密码">
+                        <input v-model="password" type="password" class="form-control" id="password"
+                            placeholder="请输入密码">
                     </div>
-                    <div class="error_message">{{ error_message }}</div>
+                    <div class="error-message">{{ error_message }}</div>
                     <button type="submit" class="btn btn-primary">提交</button>
                 </form>
             </div>
@@ -20,7 +21,7 @@
 </template>
 
 <script>
-import ContentField from '@/components/ContentField.vue'
+import ContentField from '../../../components/ContentField.vue'
 import { useStore } from 'vuex'
 import { ref } from 'vue'
 import router from '../../../router/index'
@@ -29,12 +30,27 @@ export default {
     components: {
         ContentField
     },
-
     setup() {
         const store = useStore();
         let username = ref('');
         let password = ref('');
         let error_message = ref('');
+
+        const jwt_token = localStorage.getItem("jwt_token");
+        if (jwt_token) {
+            store.commit("updateToken", jwt_token);
+            store.dispatch("getinfo", {
+                success() {
+                    router.push({ name: "home" });
+                    store.commit("updatePullingInfo", false);
+                },
+                error() {
+                    store.commit("updatePullingInfo", false);
+                }
+            })
+        } else {
+            store.commit("updatePullingInfo", false);
+        }
 
         const login = () => {
             error_message.value = "";
@@ -42,18 +58,18 @@ export default {
                 username: username.value,
                 password: password.value,
                 success() {
-                    store.dispatch("getInfo", {
+                    store.dispatch("getinfo", {
                         success() {
                             router.push({ name: 'home' });
-                            console.log(store.state.user);
                         }
                     })
                 },
                 error() {
-                    error_message.value = "用户名货密码错误";
+                    error_message.value = "用户名或密码错误";
                 }
             })
         }
+
         return {
             username,
             password,
@@ -69,7 +85,7 @@ button {
     width: 100%;
 }
 
-div.error_message {
+div.error-message {
     color: red;
 }
 </style>
