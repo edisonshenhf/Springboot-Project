@@ -7,6 +7,7 @@ export default {
         photo: "",
         token: "",
         is_login: false,
+        pulling_info: true,  // 是否正在从云端拉取信息
     },
     getters: {
     },
@@ -23,10 +24,12 @@ export default {
         logout(state) {
             state.id = "";
             state.username = "";
-            state.password = "";
             state.photo = "";
-            state.is_login = false;
             state.token = "";
+            state.is_login = false;
+        },
+        updatePullingInfo(state, pulling_info) {
+            state.pulling_info = pulling_info;
         }
     },
     actions: {
@@ -52,7 +55,7 @@ export default {
                 }
             });
         },
-        getInfo(context, data) {
+        getinfo(context, data) {
             $.ajax({
                 url: "http://127.0.0.1:3000/user/account/info/",
                 type: "get",
@@ -73,10 +76,11 @@ export default {
                 error(resp) {
                     data.error(resp);
                 }
-            });
+            })
         },
         logout(context) {
-            context.commit("logout")
+            localStorage.removeItem("jwt_token");
+            context.commit("logout");
         }
     },
     modules: {

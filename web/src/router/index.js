@@ -50,7 +50,7 @@ const routes = [
     }
   },
   {
-    path: "/user/account/login",
+    path: "/user/account/login/",
     name: "user_account_login",
     component: UserAccountLoginView,
     meta: {
@@ -58,7 +58,7 @@ const routes = [
     }
   },
   {
-    path: "/user/account/register",
+    path: "/user/account/register/",
     name: "user_account_register",
     component: UserAccountRegisterView,
     meta: {
@@ -75,7 +75,7 @@ const routes = [
   },
   {
     path: "/:catchAll(.*)",
-    redirect: "/404/",
+    redirect: "/404/"
   }
 ]
 
@@ -86,7 +86,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requestAuth && !store.state.user.is_login) {
-    next({ name: "user_account_login" })
+    next({ name: "user_account_login" });
   } else {
     next();
   }
