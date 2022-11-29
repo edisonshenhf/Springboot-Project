@@ -7,10 +7,12 @@
 
 <script>
 import GameMap from './GameMap.vue'
-
 export default {
     components: {
         GameMap,
+    },
+    setup() {
+
     }
 }
 </script>
@@ -20,6 +22,5 @@ div.PlayGround {
     width: 60vw;
     height: 70vh;
     margin: 40px auto;
-    background-color: lightblue;
 }
 </style>
